@@ -28,7 +28,7 @@ jobs:
           sudo apt-get update && sudo apt-get install ffmpeg openvpn pipx
           pipx ensurepath
           pipx install yt-dlp
-       - name: Connect to Proton VPN
+      - name: Connect to Proton VPN
         run: |
           echo "${{ secrets.PROTON_CONFIG }}" > proton.ovpn
           echo "${{ secrets.PROTON_USERNAME }}" > auth.txt
