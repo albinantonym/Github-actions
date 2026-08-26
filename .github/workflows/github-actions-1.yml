@@ -80,7 +80,7 @@ jobs:
                   display: "Enter the Extention of the output video (Like this '.mp4')"
                   type: text
                   required: true
-      - Process the video and audio files:
+      - name: Process the video and audio files:
         run: |
           to_exec="ffmpeg -i \"$a\" -i \"$v\" "
           if [ -n "${{ steps.input_2.outputs.resolution }}" ]; then
