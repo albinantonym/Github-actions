@@ -19,7 +19,7 @@ jobs:
                   required: true
 
       - name: Installation
-        run: sudo apt-get update && sudo apt-get install yt-dlp ffmpeg 
+        run: sudo apt-get update && sudo apt-get install yt-dlp ffmpeg && yt-dlp -U
       - name: Video and Audio Details
         run: |
           v=$(yt-dlp -f "bv*" --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
