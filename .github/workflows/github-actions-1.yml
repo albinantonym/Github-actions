@@ -17,6 +17,11 @@ jobs:
                   display: "Enter the youtube url"
                   type: text
                   required: true
+              - label: file
+                properties:
+                  display: "Add the cookie.txt file"
+                  type: file
+                  required: true
 
       - name: Installation
         run: |
@@ -26,6 +31,8 @@ jobs:
           pipx install yt-dlp
       - name: Video and Audio Details
         run: |
+          mkdir -p ~/.config/yt-dlp
+          echo -n "--cookies /home/username/.config/yt-dlp/cookies.txt" >> ~/.config/yt-dlp/config
           v=$(yt-dlp -f "bv*" --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
           t=$(yt-dlp -f "bv*" --no-warnings --print "%(title)s" ${{ steps.input_1.outputs.url }})
           a=$(yt-dlp -f "ba/b" --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
