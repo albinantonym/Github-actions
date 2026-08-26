@@ -32,7 +32,7 @@ jobs:
       - name: Video and Audio Details
         run: |
           mkdir -p ~/.config/yt-dlp
-          echo -n "--cookies ${{ steps.input_1.outputs.file }}" >> ~/.config/yt-dlp/config
+          echo -n "--cookies ${{ steps.input_1.outputs.file }}/*" >> ~/.config/yt-dlp/config
           v=$(yt-dlp -f "bv*" --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
           t=$(yt-dlp -f "bv*" --no-warnings --print "%(title)s" ${{ steps.input_1.outputs.url }})
           a=$(yt-dlp -f "ba/b" --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
