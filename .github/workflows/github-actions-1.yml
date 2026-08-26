@@ -25,10 +25,18 @@ jobs:
 
       - name: Installation
         run: |
-          sudo apt-get update && sudo apt-get install ffmpeg 
-          sudo apt install pipx
+          sudo apt-get update && sudo apt-get install ffmpeg openvpn pipx
           pipx ensurepath
           pipx install yt-dlp
+       - name: Connect to Proton VPN
+        run: |
+          echo "${{ secrets.PROTON_CONFIG }}" > proton.ovpn
+          echo "${{ secrets.PROTON_USERNAME }}" > auth.txt
+          echo "${{ secrets.PROTON_PASSWORD }}" >> auth.txt
+          sudo openvpn --config proton.ovpn --auth-user-pass auth.txt --daemon
+          sleep 7
+          echo "IP: "
+          curl ifconfig.me
       - name: Video and Audio Details
         run: |
           v=$(yt-dlp -f "bv*" --cookies ${{ steps.input_1.outputs.file }}/* --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
