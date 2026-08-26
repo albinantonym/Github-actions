@@ -1,0 +1,111 @@
+name: Youtube Downloader
+on: workflow_dispatch
+jobs:
+  Youtube-Downloader:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Input Link
+        id: input_1
+        uses: boasihq/interactive-inputs@v2
+        with:
+          ngrok-authtoken: ${{ secrets.NGROK_AUTHTOKEN }}
+          title: "Enter the youtube url"
+          interactive: |
+            fields:
+              - label: url
+                properties:
+                  display: "Enter the youtube url"
+                  type: text
+                  required: true
+
+      - name: Installation
+        run: sudo apt-get update && sudo apt-get install yt-dlp ffmpeg 
+      - name: Video and Audio Details
+        run: |
+          v=$(yt-dlp -f "bv*" --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
+          t=$(yt-dlp -f "bv*" --no-warnings --print "%(title)s" ${{ steps.input_1.outputs.url }})
+          a=$(yt-dlp -f "ba/b" --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
+          yt-dlp -f "bv*" --no-warnings --print "VIDEO DETAILS:" --print "" --print "Format ID - %(format_id)s" --print "Extention - %(ext)s" --print "Resolution - %(resolution)s" --print "FPS - %(fps)s" --print "Codec - %(vcodec)s" --print "Bitrate - %(vbr)s kbps" --no-simulate ${{ steps.input_1.outputs.url }}
+          yt-dtp -f "ba/b" --no-warnings --print "AUDIO DETAILS:" --print "" --print "Format ID - %(format_id)s" --print "Extention - %(ext)s" --print "Codec - %(acodec)s" --print "Bitrate - %(abr)s kbps" --print "Sample Rate - %(asr)s Hz" --print "Audio Channels - %(audio_channels)s" --no-simulate ${{ steps.input_1.outputs.url }}
+      - name: Input Video and Audio Settings
+        id: input_2
+        uses: boasihq/interactive-inputs@v2
+        with:
+          ngrok-authtoken: ${{ secrets.NGROK_AUTHTOKEN }}
+          title: "Enter the Details(Leave empty for default)"
+          interactive: |
+            fields:
+              - label: resolution
+                properties:
+                  display: "Enter the resolution of the video (Like this '1920:1080')"
+                  type: text
+                  required: false
+              - label: FPS
+                properties:
+                  display: "Enter the FPS of the video (Like this '60')"
+                  type: text
+                  required: false
+              - label: Vid_Codec
+                properties:
+                  display: "Enter the Codec of the video (Like this 'libsvtav1')"
+                  type: text
+                  required: false
+              - label: Vid_Bitrate
+                properties:
+                  display: "Enter the Bitrate of the video (Like this '5M')"
+                  type: text
+                  required: false
+              - label: Aud_Codec
+                properties:
+                  display: "Enter the Codec of the Audio (Like this 'aac')"
+                  type: text
+                  required: false
+              - label: Aud_Bitrate
+                properties:
+                  display: "Enter the Bitrate of the Audio (Like this '64K')"
+                  type: text
+                  required: false
+              - label: Sample_Rate
+                properties:
+                  display: "Enter the Sample Rate of the Audio (Like this '48000')"
+                  type: text
+                  required: false
+              - label: Channels
+                properties:
+                  display: "Enter the No. of Audio Channels (Like this '2')"
+                  type: text
+                  required: false
+              - label: Ext
+                properties:
+                  display: "Enter the Extention of the output video (Like this '.mp4')"
+                  type: text
+                  required: true
+      - Process the video and audio files:
+        run: |
+          to_exec="ffmpeg -i \"$a\" -i \"$v\" "
+          if [ -n "${{ steps.input_2.outputs.resolution }}" ]; then
+            to_exec+=" -vf \"scale=${{ steps.input_2.outputs.resolution }}\" "
+          fi
+          if [ -n "${{ steps.input_2.outputs.FPS }}" ]; then
+            to_exec+=" -r ${{ steps.input_2.outputs.FPS }} "
+          fi
+          if [ -n "${{ steps.input_2.outputs.Vid_Codec }}" ]; then
+            to_exec+=" -c:v ${{ steps.input_2.outputs.Vid_Codec }} "
+          fi
+          if [ -n "${{ steps.input_2.outputs.Vid_Bitrate }}" ]; then
+            to_exec+=" -b:v ${{ steps.input_2.outputs.Vid_Bitrate }} "
+          fi
+          if [ -n "${{ steps.input_2.outputs.Aud_Codec }}" ]; then
+            to_exec+=" -c:a ${{ steps.input_2.outputs.Aud_Codec }} "
+          fi
+          if [ -n "${{ steps.input_2.outputs.Aud_Bitrate }}" ]; then
+            to_exec+=" -b:a ${{ steps.input_2.outputs.Aud_Bitrate }} "
+          fi
+          if [ -n "${{ steps.input_2.outputs.Sample_Rate }}" ]; then
+            to_exec+=" -ar ${{ steps.input_2.outputs.Sample_Rate }} "
+          fi
+          if [ -n "${{ steps.input_2.outputs.Channels }}" ]; then
+            to_exec+=" -ac ${{ steps.input_2.outputs.Channels }} "
+          fi
+          to_exec+=" \"$t${{ steps.input_2.outputs.Ext }}\""
+          eval "$to_exec"
