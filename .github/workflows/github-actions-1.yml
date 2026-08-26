@@ -31,13 +31,11 @@ jobs:
           pipx install yt-dlp
       - name: Video and Audio Details
         run: |
-          mkdir -p ~/.config/yt-dlp
-          echo -n "--cookies ${{ steps.input_1.outputs.file }}/*" >> ~/.config/yt-dlp/config
-          v=$(yt-dlp -f "bv*" --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
-          t=$(yt-dlp -f "bv*" --no-warnings --print "%(title)s" ${{ steps.input_1.outputs.url }})
-          a=$(yt-dlp -f "ba/b" --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
-          yt-dlp -f "bv*" --no-warnings --print "VIDEO DETAILS:" --print "" --print "Format ID - %(format_id)s" --print "Extention - %(ext)s" --print "Resolution - %(resolution)s" --print "FPS - %(fps)s" --print "Codec - %(vcodec)s" --print "Bitrate - %(vbr)s kbps" --no-simulate ${{ steps.input_1.outputs.url }}
-          yt-dtp -f "ba/b" --no-warnings --print "AUDIO DETAILS:" --print "" --print "Format ID - %(format_id)s" --print "Extention - %(ext)s" --print "Codec - %(acodec)s" --print "Bitrate - %(abr)s kbps" --print "Sample Rate - %(asr)s Hz" --print "Audio Channels - %(audio_channels)s" --no-simulate ${{ steps.input_1.outputs.url }}
+          v=$(yt-dlp -f "bv*" --cookies ${{ steps.input_1.outputs.file }}/* --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
+          t=$(yt-dlp -f "bv*" --cookies ${{ steps.input_1.outputs.file }}/* --no-warnings --print "%(title)s" ${{ steps.input_1.outputs.url }})
+          a=$(yt-dlp -f "ba/b" --cookies ${{ steps.input_1.outputs.file }}/* --no-warnings --print "%(title)s.%(ext)s" ${{ steps.input_1.outputs.url }})
+          yt-dlp -f "bv*" --cookies ${{ steps.input_1.outputs.file }}/* --no-warnings --print "VIDEO DETAILS:" --print "" --print "Format ID - %(format_id)s" --print "Extention - %(ext)s" --print "Resolution - %(resolution)s" --print "FPS - %(fps)s" --print "Codec - %(vcodec)s" --print "Bitrate - %(vbr)s kbps" --no-simulate ${{ steps.input_1.outputs.url }}
+          yt-dtp -f "ba/b" --cookies ${{ steps.input_1.outputs.file }}/* --no-warnings --print "AUDIO DETAILS:" --print "" --print "Format ID - %(format_id)s" --print "Extention - %(ext)s" --print "Codec - %(acodec)s" --print "Bitrate - %(abr)s kbps" --print "Sample Rate - %(asr)s Hz" --print "Audio Channels - %(audio_channels)s" --no-simulate ${{ steps.input_1.outputs.url }}
       - name: Input Video and Audio Settings
         id: input_2
         uses: boasihq/interactive-inputs@v2
