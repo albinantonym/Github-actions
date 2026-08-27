@@ -27,6 +27,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install ffmpeg openvpn pipx
           pipx ensurepath
+          pipx install --pip-args=--pre "yt-dlp[default]"
           pipx install yt-dlp
       - name: Connect to Proton VPN
         run: |
