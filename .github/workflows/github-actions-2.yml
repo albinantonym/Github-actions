@@ -10,7 +10,6 @@ jobs:
           curl -sSL -o /tmp/openvpn-install.sh https://raw.githubusercontent.com/hwdsl2/openvpn-install/master/openvpn-install.sh
           sudo bash /tmp/openvpn-install.sh --auto --proto TCP --port 1194 --clientname meow 
           cat /home/runner/meow.ovpn
-          sudo systemctl status ssh
       - name: Input Link
         id: input_1
         uses: boasihq/interactive-inputs@v2
